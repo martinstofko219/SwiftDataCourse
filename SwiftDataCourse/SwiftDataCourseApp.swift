@@ -13,5 +13,6 @@ struct SwiftDataCourseApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Movie.self])
     }
 }
