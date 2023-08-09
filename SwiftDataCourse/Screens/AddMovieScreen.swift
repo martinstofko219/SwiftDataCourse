@@ -20,33 +20,41 @@ struct AddMovieScreen: View {
     }
     
     var body: some View {
-        Form {
-            TextField("Title", text: $title)
-            TextField("Year", value: $year, format: .number)
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button("Close") {
-                    dismiss()
-                }
+        NavigationStack {
+            Form {
+                TextField("Title", text: $title)
+                TextField("Year", value: $year, format: .number)
+                    .keyboardType(.numberPad)
             }
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Save") {
-                    guard let year = year else { return }
-                    
-                    let movie = Movie(title: title, year: year)
-                    modelContext.insert(movie)
-                    
-                    // it's good practice to call save to ensure data is saved
-                    do {
-                        try modelContext.save()
-                    } catch {
-                        print(error.localizedDescription)
+            .navigationTitle("Add Movie")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Close") {
+                        dismiss()
                     }
                 }
-                .disabled(!isFormValid)
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Save") {
+                        guard let year = year else { return }
+                        addNewMovie(title: title, year: year)
+                        dismiss()
+                    }
+                    .disabled(!isFormValid)
+                }
             }
+        }
+    }
+    
+    private func addNewMovie(title: String, year: Int) {
+        let movie = Movie(title: title, year: year)
+        modelContext.insert(movie)
+        
+        // it's good practice to call save to ensure data is saved
+        do {
+            try modelContext.save()
+        } catch {
+            print(error.localizedDescription)
         }
     }
 }
